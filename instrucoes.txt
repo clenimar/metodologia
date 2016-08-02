@@ -1,0 +1,16 @@
+Utilização:
+
+./ordenar <algoritmo> [entrada] [saída]
+
+O parâmetro <algoritmo> é obrigatório e pode ser:
+    - sequencial (para executar o QuickSort sequencial) ou
+    - paralelo (para executar o QuickSort paralelo).
+
+O parâmetro [entrada] é opcional e define um arquivo de entrada com os itens
+a serem ordenados separados por linhas. Não definir um arquivo de entrada faz
+o algoritmo escolhido utilizar o arquivo `default_input.txt` como fonte.
+
+O parâmetro [saída] é opcional e define um arquivo no qual a saída ordenada
+deve ser escrita. Não definir o parâmetro saída faz com que o algoritmo
+escolhido escreva sua saída no arquivo `output.txt`, no mesmo diretório de
+execução.
