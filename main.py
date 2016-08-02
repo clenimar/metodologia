@@ -4,9 +4,8 @@ import random
 import sys
 from multiprocessing import Process, Pipe
 
-# TODO: definp
 DEFAULT_INPUT = 'default_input.txt'
-DEFAULT_OUTPUT = None
+DEFAULT_OUTPUT = 'output.txt'
 
 # algorithm names:
 SEQUENTIAL = 'sequencial'
@@ -14,7 +13,6 @@ PARALLEL = 'paralelo'
 
 
 def main():
-    print(sys.argv)
     if len(sys.argv) <= 1:
         print("tá perdido, moral? "
               "modo de uso: \n"
@@ -32,24 +30,17 @@ def main():
         outcome = quicksort(input)
     elif alg == PARALLEL:
         pconn, cconn = Pipe()
-    
         n = 3
-
-        p = Process(target=parallelquicksort, \
-                args=(input, cconn, n))
+        p = Process(target=parallelquicksort,
+                    args=(input, cconn, n))
         p.start()
-    
         outcome = pconn.recv()
 
         p.join()
 
-    if output is DEFAULT_OUTPUT:
+    with open(output, 'w') as o:
         for line in outcome:
-            print(line)
-    else:
-        with open(output, 'w') as o:
-            for line in outcome:
-                o.write(line + '\n')
+            o.write(line + '\n')
 
 
 def prepare_input(input):
@@ -80,7 +71,7 @@ def parallelquicksort(lista, conn, procNum):
     for x in lista:
         if x < pivo:
             menoresP.append(x)
- 
+
     maioresP = []
     for x in lista:
         if x >= pivo:
@@ -109,8 +100,4 @@ def parallelquicksort(lista, conn, procNum):
 
 if __name__ == '__main__':
     main()
-
-
-
-
 
