@@ -55,9 +55,9 @@ def quicksort(input=None):
         return input
     pivot = input.pop(random.randint(0, len(input) - 1))
 
-    return quicksort([x for x in input if x < pivot]) \
-           + [pivot] \
-           + quicksort([x for x in input if x >= pivot])
+    return (quicksort([x for x in input if x < pivot]) +
+           [pivot] +
+           quicksort([x for x in input if x >= pivot]))
 
 def parallelquicksort(lista, conn, procNum):
     if procNum <= 0 or len(lista) <= 1:
@@ -80,12 +80,12 @@ def parallelquicksort(lista, conn, procNum):
 
     pconnMenores, cconnMenores = Pipe()
 
-    menoresProc = Process(target=parallelquicksort, \
-            args=(menoresP, cconnMenores, procNum - 1))
+    menoresProc = Process(target=parallelquicksort,
+                          args=(menoresP, cconnMenores, procNum - 1))
 
     pconnMaiores, cconnMaiores = Pipe()
-    maioresProc = Process(target=parallelquicksort, \
-            args=(maioresP, cconnMaiores, procNum - 1))
+    maioresProc = Process(target=parallelquicksort,
+                          args=(maioresP, cconnMaiores, procNum - 1))
 
 
     menoresProc.start()
