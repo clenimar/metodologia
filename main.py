@@ -31,7 +31,17 @@ def main():
     if alg == SEQUENTIAL:
         outcome = quicksort(input)
     elif alg == PARALLEL:
-        outcome = parallelquicksort(input)
+        pconn, cconn = Pipe()
+    
+        n = 3
+        
+        p = Process(target=parallelquicksort, \
+                args=(input, cconn, n))
+        p.start()
+    
+        outcome = pconn.recv()
+
+        p.join()
 
     if output is DEFAULT_OUTPUT:
         for line in outcome:
@@ -58,9 +68,43 @@ def quicksort(input=None):
            + [pivot] \
            + quicksort([x for x in input if x >= pivot])
 
-def parallelquicksort(input=None):
-    if input is None: print('ho')
-    return sorted(input)
+def parallelquicksort(lista, conn, procNum):
+    if procNum <= 0 or len(lista) <= 1:
+        conn.send(quicksort(lista))
+        conn.close()
+        return
+
+    pivo = lista.pop(random.randint(0, len(lista)-1))
+
+    menoresP = []
+    for x in lista:
+        if x < pivo:
+            lista.append(x)
+ 
+    maioresP = []
+    for x in lista:
+        if x >= pivo:
+            lista.append(x)
+
+
+    pconnMenores, cconnMenores = Pipe()
+
+    menoresProc = Process(target=parallelquicksort, \
+            args=(menoresP, cconnMenores, procNum - 1))
+
+    pconnMaiores, cconnMaiores = Pipe()
+    maioresProc = Process(target=parallelquicksort, \
+            args=(maioresP, cconnMaiores, procNum - 1))
+
+
+    menoresProc.start()
+    maioresProc.start()
+
+    conn.send(pconnMenores.recv() + [pivo] + pconnMaiores.recv())
+    conn.close()
+
+    menoresProc.join()
+    maioresProc.join()
 
 
 if __name__ == '__main__':
