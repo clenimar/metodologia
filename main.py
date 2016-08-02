@@ -34,7 +34,7 @@ def main():
         pconn, cconn = Pipe()
     
         n = 3
-        
+
         p = Process(target=parallelquicksort, \
                 args=(input, cconn, n))
         p.start()
@@ -79,12 +79,12 @@ def parallelquicksort(lista, conn, procNum):
     menoresP = []
     for x in lista:
         if x < pivo:
-            lista.append(x)
+            menoresP.append(x)
  
     maioresP = []
     for x in lista:
         if x >= pivo:
-            lista.append(x)
+            maioresP.append(x)
 
 
     pconnMenores, cconnMenores = Pipe()
