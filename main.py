@@ -1,53 +1,55 @@
 # -*- coding: UTF-8 -*-
 
 import random
-import sys
+import time
 from multiprocessing import Process, Pipe
 
-DEFAULT_INPUT = 'default_input.txt'
-DEFAULT_OUTPUT = 'output.txt'
 
 # algorithm names:
 SEQUENTIAL = 'sequencial'
 PARALLEL = 'paralelo'
 
+# input files
+ENTRADAS = {
+        'S': ['small1.txt', 'small2.txt', 'small3.txt', 'small4.txt', 'small5.txt'],
+        'M': ['medium1.txt', 'medium2.txt', 'medium3.txt', 'medium4.txt', 'medium5.txt'],
+        'L': ['large1.txt', 'large2.txt', 'large3.txt', 'large4.txt', 'large5.txt']
+}
 
-def main():
-    if len(sys.argv) <= 1:
-        print("tá perdido, moral? "
-              "modo de uso: \n"
-              " ./ordenar <algoritmo> <entrada>.txt \n"
-              "ex.: ./ordenar sequencial nomes.txt")
 
-    # read input args
-    alg = sys.argv[1]
-    input = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_INPUT
-    output = sys.argv[3] if len(sys.argv) > 3 else DEFAULT_OUTPUT
+def get_input_path(tipo_entrada):
+    r = random.randint(0, 4)
+    return 'input_samples/' + ENTRADAS[tipo_entrada][r]
 
-    input = prepare_input(input)
 
-    if alg == SEQUENTIAL:
-        outcome = quicksort(input)
-    elif alg == PARALLEL:
+def main(algoritmo, tipo_entrada):
+    path = get_input_path(tipo_entrada)
+    lista = prepare_input(path)
+
+    if algoritmo == SEQUENTIAL:
+        i = time.time()
+        quicksort(lista)
+        e = time.time()
+        return "%s, %s, %s" % (algoritmo, tipo_entrada, str(e-i))
+    elif algoritmo == PARALLEL:
+        i = time.time()
         pconn, cconn = Pipe()
         n = 3
         p = Process(target=parallelquicksort,
-                    args=(input, cconn, n))
+                    args=(lista, cconn, n))
         p.start()
-        outcome = pconn.recv()
+        pconn.recv()
 
         p.join()
-
-    with open(output, 'w') as o:
-        for line in outcome:
-            o.write(line + '\n')
+        e = time.time()
+        return "%s, %s, %s" % (algoritmo, tipo_entrada, str(e-i))
 
 
-def prepare_input(input):
+def prepare_input(path):
     """Read a text file user provides and return a list."""
-    with open(input, 'r') as i:
-        list = i.read().splitlines()
-        return list
+    with open(path, 'r') as i:
+        lista = i.read().splitlines()
+        return lista
 
 
 def quicksort(input=None):
@@ -58,6 +60,7 @@ def quicksort(input=None):
     return (quicksort([x for x in input if x < pivot]) +
            [pivot] +
            quicksort([x for x in input if x >= pivot]))
+
 
 def parallelquicksort(lista, conn, procNum):
     if procNum <= 0 or len(lista) <= 1:
