@@ -6,7 +6,7 @@
 #data <- read.csv("data/result_i5.csv", header = TRUE, sep = ";")
 
 #dados processador xeon
-data <- read.csv("data/result_xenon.csv", header = TRUE, sep = ";")
+data <- read.csv("data/output_i7.csv", header = TRUE, sep = ";")
 
 anova_fun <- function(analysis, type){
   
