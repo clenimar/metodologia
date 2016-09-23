@@ -15,6 +15,11 @@ ENTRADAS = {
         'M': ['medium1.txt', 'medium2.txt', 'medium3.txt', 'medium4.txt', 'medium5.txt'],
         'L': ['large1.txt', 'large2.txt', 'large3.txt', 'large4.txt', 'large5.txt']
 }
+C_ENTRADA = {
+        'S': '1000',
+        'M': '10000',
+        'L': '1000000'
+        }
 
 
 def get_input_path(tipo_entrada):
@@ -30,7 +35,7 @@ def main(algoritmo, tipo_entrada):
         i = time.time()
         quicksort(lista)
         e = time.time()
-        return "%s, %s, %s" % (algoritmo, tipo_entrada, str(e-i))
+        return "%s;%s;%s" % (algoritmo, C_ENTRADA[tipo_entrada], str(e-i))
     elif algoritmo == PARALLEL:
         i = time.time()
         pconn, cconn = Pipe()
@@ -42,7 +47,7 @@ def main(algoritmo, tipo_entrada):
 
         p.join()
         e = time.time()
-        return "%s, %s, %s" % (algoritmo, tipo_entrada, str(e-i))
+        return "%s;%s;%s" % (algoritmo, C_ENTRADA[tipo_entrada], str(e-i))
 
 
 def prepare_input(path):

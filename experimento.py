@@ -17,7 +17,9 @@ N_REPETICOES = 20
 
 def experimento():
     for t in TRAT:
-        print "tratamento %s" % t
         for n in range(1, N_REPETICOES + 1):
             o = ordenar(TRAT[t][0], TRAT[t][1])
-            print "repeticao #%d: %s" % (n, o)
+            print "%s;%d;%s" % (t, n, o)
+
+if __name__ == '__main__':
+    experimento()
