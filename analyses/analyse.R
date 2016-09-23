@@ -6,7 +6,17 @@
 #data <- read.csv("data/result_i5.csv", header = TRUE, sep = ";")
 
 #dados processador xeon
-data <- read.csv("data/output_i7.csv", header = TRUE, sep = ";")
+data_xeon <- read.csv("data/output_xeon.csv", header = TRUE, sep = ";")
+
+data_i5 <- read.csv("data/result_i5.csv", header = TRUE, sep = ";")
+
+data_i7 <- read.csv("data/output_i7.csv", header = TRUE, sep = ";")
+
+data_xeon$processador = "xeon"
+data_i7$processador = " i7 "
+data_i5$processador = " i5 "
+
+
 
 anova_fun <- function(analysis, type){
   
@@ -75,11 +85,20 @@ stripchart(time~as.character(size),
 dev.off()
 
 
+data = rbind(data_i5,data_xeon,data_i7)
 
 #fitting data to anova
-aov_type <- lm(time~type,data=data)
-aov_size <- lm(time~as.character(size),data=data)
+aov <- lm(time~type + size ,data=data)
+#aov_size <- lm(time~as.character(size),data=data)
 
-anova_fun(aov_type, "type")
-anova_fun(aov_size, "size")
+anova_fun(aov, "type")
 
+
+boxplot(time~type,data=data, main="Visão geral Tempo x Algoritmo", 
+        xlab="Algoritmo", ylab="Tempo de execução")
+
+boxplot(time~type,data=data[data$size == 1000,], main="Tempo x Algoritmo, Entrada 1000", 
+        xlab="Algoritmo", ylab="Tempo de execução")
+
+boxplot(time~type,data=data[data$size == 10000,], main="Tempo x Algoritmo, Entrada 1000", 
+        xlab="Algoritmo", ylab="Tempo de execução")
